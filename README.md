@@ -11,3 +11,5 @@ The code has multiple dependencies
 - glew - http://glew.sourceforge.net/
 - glm - https://github.com/g-truc/glm/tree/master/glm
 - stb_image.h -> https://github.com/nothings/stb/blob/master/stb_image.h
+
+_Current master branch has work till the Camera class._
