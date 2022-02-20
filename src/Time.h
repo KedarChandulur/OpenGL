@@ -1,7 +1,12 @@
 #pragma once
 
-class Time
+struct Time
 {
 public:
-	void Update();
+	static void Update();
+	static const float& GetDeltaTime();
+private:
+	static float deltaTime;
+	static float lastFrame;
+	static float currentFrame;
 };
