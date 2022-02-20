@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Time.h"
 
 Camera::Camera(glm::vec3 position, glm::vec3 worldUp, float yaw, float pitch) : m_worldUp(worldUp)
 {
@@ -31,21 +32,21 @@ void Camera::UpdateCameraVectors()
 	cameraConstraints.up = glm::normalize(glm::cross(cameraConstraints.right, cameraConstraints.front));
 }
 
-void Camera::ProcessCameraMovement(float deltaTime, CameraMoveDirection cameraMoveDirection)
+void Camera::ProcessCameraMovement(CameraMoveDirection cameraMoveDirection)
 {
 	switch (cameraMoveDirection)
 	{
 	case CameraMoveDirection::Forward:
-		transform.position += cameraConstraints.front * settings.moveSpeed * deltaTime;
+		transform.position += cameraConstraints.front * settings.moveSpeed * Time::GetDeltaTime();
 		break;
 	case CameraMoveDirection::Backward:
-		transform.position -= cameraConstraints.front * settings.moveSpeed * deltaTime;
+		transform.position -= cameraConstraints.front * settings.moveSpeed * Time::GetDeltaTime();
 		break;
 	case CameraMoveDirection::Left:
-		transform.position -= cameraConstraints.right * settings.moveSpeed * deltaTime;
+		transform.position -= cameraConstraints.right * settings.moveSpeed * Time::GetDeltaTime();
 		break;
 	case CameraMoveDirection::Right:
-		transform.position += cameraConstraints.right * settings.moveSpeed * deltaTime;
+		transform.position += cameraConstraints.right * settings.moveSpeed * Time::GetDeltaTime();
 		break;
 	case CameraMoveDirection::None:
 		break;
@@ -86,4 +87,16 @@ void Camera::ProcessFOV(float yoffset)
 glm::mat4 Camera::GetViewMatrix() const
 {
 	return glm::lookAt(transform.position, transform.position + cameraConstraints.front, cameraConstraints.up);
+}
+
+void Camera::ProcessInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		ProcessCameraMovement(CameraMoveDirection::Forward);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		ProcessCameraMovement(CameraMoveDirection::Backward);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		ProcessCameraMovement(CameraMoveDirection::Left);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		ProcessCameraMovement(CameraMoveDirection::Right);
 }
