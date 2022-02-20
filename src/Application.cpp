@@ -4,6 +4,7 @@
 #include "VertexBufferLayout.h"
 #include "Texture.h"
 #include "Camera.h"
+#include "Time.h"
 
 int main(void)
 {
@@ -133,7 +134,6 @@ int main(void)
         glm::mat4 model(1.0f), view(model), projection(model);
         model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f,0.0f,0.0f));
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        //projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
         projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);
 
         shader.SetUniform1i("u_Texture", 0);
@@ -153,7 +153,11 @@ int main(void)
 
         while (!glfwWindowShouldClose(window))
         {
+            Time::Update();
+
             Renderer::ProcessInput(window);
+            camera.ProcessInput(window);
+
             Renderer::Clear();
             Renderer::Draw(va, ib, shader);
 
