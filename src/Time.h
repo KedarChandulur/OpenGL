@@ -5,8 +5,14 @@ struct Time
 public:
 	static void Update();
 	static const float& GetDeltaTime();
+
+	Time(Time& other) = delete;
+	void operator=(const Time&) = delete;
 private:
 	static float deltaTime;
 	static float lastFrame;
 	static float currentFrame;
+
+	Time() = default;
+	~Time() = default;
 };
