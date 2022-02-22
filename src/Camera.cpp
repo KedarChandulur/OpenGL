@@ -1,4 +1,11 @@
 #include "Camera.h"
+#include "Time.h"
+#include "Renderer.h"
+
+Camera::Camera()
+{
+	UpdateCameraVectors();
+}
 
 Camera::Camera(glm::vec3 position, glm::vec3 worldUp, float yaw, float pitch) : m_worldUp(worldUp)
 {
@@ -31,37 +38,60 @@ void Camera::UpdateCameraVectors()
 	cameraConstraints.up = glm::normalize(glm::cross(cameraConstraints.right, cameraConstraints.front));
 }
 
-void Camera::ProcessCameraMovement(float deltaTime, CameraMoveDirection cameraMoveDirection)
+void Camera::ProcessCameraMovement(CameraMoveDirection cameraMoveDirection)
 {
 	switch (cameraMoveDirection)
 	{
 	case CameraMoveDirection::Forward:
-		transform.position += cameraConstraints.front * settings.moveSpeed * deltaTime;
+		transform.position += cameraConstraints.front * settings.moveSpeed * Time::GetDeltaTime();
 		break;
 	case CameraMoveDirection::Backward:
-		transform.position -= cameraConstraints.front * settings.moveSpeed * deltaTime;
+		transform.position -= cameraConstraints.front * settings.moveSpeed * Time::GetDeltaTime();
 		break;
 	case CameraMoveDirection::Left:
-		transform.position -= cameraConstraints.right * settings.moveSpeed * deltaTime;
+		transform.position -= cameraConstraints.right * settings.moveSpeed * Time::GetDeltaTime();
 		break;
 	case CameraMoveDirection::Right:
-		transform.position += cameraConstraints.right * settings.moveSpeed * deltaTime;
+		transform.position += cameraConstraints.right * settings.moveSpeed * Time::GetDeltaTime();
 		break;
 	case CameraMoveDirection::None:
 		break;
 	}
 }
 
-// processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-void Camera::ProcessCameraRotation(float xoffset, float yoffset, float& mouseSens, GLboolean constrainPitch)
+glm::mat4 Camera::GetViewMatrix() const
 {
-	//xoffset *= mouseSens;
-	//yoffset *= mouseSens;
-	//eulerAngles.yaw += xoffset;
-	//eulerAngles.pitch += yoffset;
+	return glm::lookAt(transform.position, transform.position + cameraConstraints.front, cameraConstraints.up);
+}
 
-	eulerAngles.yaw += (xoffset * mouseSens);
-	eulerAngles.pitch += (yoffset * mouseSens);
+void Camera::ProcessInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		ProcessCameraMovement(CameraMoveDirection::Forward);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		ProcessCameraMovement(CameraMoveDirection::Backward);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		ProcessCameraMovement(CameraMoveDirection::Left);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		ProcessCameraMovement(CameraMoveDirection::Right);
+}
+
+void Camera::ProcessMouseScroll(float yoffset, float& fov)
+{
+	fov -= yoffset;
+	if (fov < 1.0f)
+		fov = 1.0f;
+	else if (fov > 90.0f)
+		fov = 90.0f;
+}
+
+// processes input received from a mouse input system. Expects the offset value in both the x and y direction.
+void Camera::ProcessMouseMove(float xoffset, float yoffset, GLboolean constrainPitch)
+{
+	xoffset *= mouseMoveData.sensitivity;
+	yoffset *= mouseMoveData.sensitivity;
+	eulerAngles.yaw += xoffset;
+	eulerAngles.pitch += yoffset;
 
 	if (constrainPitch)
 	{
@@ -72,18 +102,4 @@ void Camera::ProcessCameraRotation(float xoffset, float yoffset, float& mouseSen
 	}
 
 	UpdateCameraVectors();
-}
-
-void Camera::ProcessFOV(float yoffset)
-{
-	settings.fov -= yoffset;
-	if (settings.fov < 1.0f)
-		settings.fov = 1.0f;
-	else if (settings.fov > 90.0f)
-		settings.fov = 90.0f;
-}
-
-glm::mat4 Camera::GetViewMatrix() const
-{
-	return glm::lookAt(transform.position, transform.position + cameraConstraints.front, cameraConstraints.up);
 }

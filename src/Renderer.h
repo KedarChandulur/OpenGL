@@ -24,15 +24,13 @@ bool GLLogCallHex();
 class Renderer
 {
 public:
-    Renderer() = default;
-    ~Renderer() = default;
-
     static void Clear();
     static void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader);
-    //Window resize callback function.
-    static void SetFramebuffer_Size_Callback(GLFWwindow* window);
     static void ProcessInput(GLFWwindow* window);
 
     Renderer(Renderer& other) = delete;
     void operator=(const Renderer&) = delete;
+private:
+    Renderer() = default;
+    ~Renderer() = default;
 };
