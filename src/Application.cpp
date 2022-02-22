@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Time.h"
+#include "CallBackBridge.h"
 
 int main(void)
 {
@@ -45,8 +46,10 @@ int main(void)
 
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
     camera.settings.aspectRatio = (float)screenWidth / (float)screenHeight;
-
-    Renderer::SetFramebuffer_Size_Callback(window);
+    
+    CallBackBridge callBackBridge;
+    callBackBridge.SetWindowResizeCallback(window);
+    callBackBridge.SetMouseCallbacks(window, camera);
 
     //Adding extra scope for clean up.
     {
@@ -161,12 +164,12 @@ int main(void)
             Renderer::Clear();
             Renderer::Draw(va, ib, shader);
 
-            glm::mat4 view_L(1.0f);
-            /*float camX = static_cast<float>(sin(glfwGetTime()) * radius);
-            float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
-            view_L = glm::lookAt(glm::vec3(camX, 0.0, camZ), cameraTarget, up);*/
-            view_L = camera.GetViewMatrix();
-            shader.SetUniformMat4f("view", view_L);
+            //Updating projection matrix again because fov is be changed through mouse scroll.
+            projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);
+            shader.SetUniformMat4f("projection", projection);
+
+            view = camera.GetViewMatrix();
+            shader.SetUniformMat4f("view", view);
 
             glfwSwapBuffers(window);
             glfwPollEvents();
