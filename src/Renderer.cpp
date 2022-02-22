@@ -43,11 +43,6 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void Renderer::SetFramebuffer_Size_Callback(GLFWwindow* window)
-{
-    glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) { GLCall(glViewport(0, 0, width, height)); });
-}
-
 void Renderer::ProcessInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
