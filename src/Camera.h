@@ -24,7 +24,7 @@ enum class ProjectionType : GLubyte
 struct Transform
 {
 	glm::vec3 position = glm::vec3(0.0f);
-	//glm::vec3 scale;
+	//glm::vec3 scale = glm::vec3(1.0f);
 };
 
 struct EulerAngles
@@ -51,31 +51,40 @@ struct CameraConstraints
 	glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
 };
 
+struct MouseMoveData
+{
+	bool firstMove = true;
+	float sensitivity = 0.3f;
+	glm::vec2 lastPositions;
+	glm::vec2 offsetPositions;
+};
+
 class Camera
 {
 public:
 	virtual ~Camera() = default;
 
-	Camera() { UpdateCameraVectors(); };
+	Camera();
 	Camera(glm::vec3 position = glm::vec3(0.0f), glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = -90.0f, float pitch = 0.0f);
 	Camera(float posX = 0.0f, float posY = 0.0f, float posZ = 0.0f, float upX = 0.0f, float upY = 0.1f, float upZ = 0.0f, float yaw = -90.0f, float pitch = 0.0f);
 
 	void ProcessInput(GLFWwindow* window);
+	void ProcessMouseScroll(float yoffset, float& fov);
+	void ProcessMouseMove(float xoffset, float yoffset, GLboolean constrainPitch = true);
 
 	// returns the view matrix calculated using Euler Angles and the LookAt Matrix
 	glm::mat4 GetViewMatrix() const;
 
-	Transform transform;
-	EulerAngles eulerAngles;
 	CameraSettings settings;
-	CameraConstraints cameraConstraints;
+	MouseMoveData mouseMoveData;
 private:
 	void ProcessCameraMovement(CameraMoveDirection cameraMoveDirection = CameraMoveDirection::None);
 	void UpdateCameraVectors();
-	void ProcessFOV(float yoffset);
-	void ProcessCameraRotation(float xoffset, float yoffset, float& mouseSens, GLboolean constrainPitch = true);
-
+	
 	glm::vec3 m_worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	Transform transform;
+	EulerAngles eulerAngles;
+	CameraConstraints cameraConstraints;
 };
 
 #endif

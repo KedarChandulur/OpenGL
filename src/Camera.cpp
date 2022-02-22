@@ -1,5 +1,11 @@
 #include "Camera.h"
 #include "Time.h"
+#include "Renderer.h"
+
+Camera::Camera()
+{
+	UpdateCameraVectors();
+}
 
 Camera::Camera(glm::vec3 position, glm::vec3 worldUp, float yaw, float pitch) : m_worldUp(worldUp)
 {
@@ -53,37 +59,6 @@ void Camera::ProcessCameraMovement(CameraMoveDirection cameraMoveDirection)
 	}
 }
 
-// processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-void Camera::ProcessCameraRotation(float xoffset, float yoffset, float& mouseSens, GLboolean constrainPitch)
-{
-	//xoffset *= mouseSens;
-	//yoffset *= mouseSens;
-	//eulerAngles.yaw += xoffset;
-	//eulerAngles.pitch += yoffset;
-
-	eulerAngles.yaw += (xoffset * mouseSens);
-	eulerAngles.pitch += (yoffset * mouseSens);
-
-	if (constrainPitch)
-	{
-		if (eulerAngles.pitch > 89.0f)
-			eulerAngles.pitch = 89.0f;
-		if (eulerAngles.pitch < -89.0f)
-			eulerAngles.pitch = -89.0f;
-	}
-
-	UpdateCameraVectors();
-}
-
-void Camera::ProcessFOV(float yoffset)
-{
-	settings.fov -= yoffset;
-	if (settings.fov < 1.0f)
-		settings.fov = 1.0f;
-	else if (settings.fov > 90.0f)
-		settings.fov = 90.0f;
-}
-
 glm::mat4 Camera::GetViewMatrix() const
 {
 	return glm::lookAt(transform.position, transform.position + cameraConstraints.front, cameraConstraints.up);
@@ -99,4 +74,32 @@ void Camera::ProcessInput(GLFWwindow* window)
 		ProcessCameraMovement(CameraMoveDirection::Left);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		ProcessCameraMovement(CameraMoveDirection::Right);
+}
+
+void Camera::ProcessMouseScroll(float yoffset, float& fov)
+{
+	fov -= yoffset;
+	if (fov < 1.0f)
+		fov = 1.0f;
+	else if (fov > 90.0f)
+		fov = 90.0f;
+}
+
+// processes input received from a mouse input system. Expects the offset value in both the x and y direction.
+void Camera::ProcessMouseMove(float xoffset, float yoffset, GLboolean constrainPitch)
+{
+	xoffset *= mouseMoveData.sensitivity;
+	yoffset *= mouseMoveData.sensitivity;
+	eulerAngles.yaw += xoffset;
+	eulerAngles.pitch += yoffset;
+
+	if (constrainPitch)
+	{
+		if (eulerAngles.pitch > 89.0f)
+			eulerAngles.pitch = 89.0f;
+		if (eulerAngles.pitch < -89.0f)
+			eulerAngles.pitch = -89.0f;
+	}
+
+	UpdateCameraVectors();
 }
