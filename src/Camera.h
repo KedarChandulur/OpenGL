@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW\glfw3.h>
+#include "I_InputHelper.h"
 
 enum class CameraMoveDirection : GLshort
 {
@@ -59,7 +60,7 @@ struct MouseMoveData
 	glm::vec2 offsetPositions;
 };
 
-class Camera
+class Camera : I_InputHelper
 {
 public:
 	virtual ~Camera() = default;
@@ -68,7 +69,7 @@ public:
 	Camera(glm::vec3 position = glm::vec3(0.0f), glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = -90.0f, float pitch = 0.0f);
 	Camera(float posX = 0.0f, float posY = 0.0f, float posZ = 0.0f, float upX = 0.0f, float upY = 0.1f, float upZ = 0.0f, float yaw = -90.0f, float pitch = 0.0f);
 
-	void ProcessInput(GLFWwindow* window);
+	void ProcessInput(GLFWwindow* window) override;
 	void ProcessMouseScroll(float yoffset, float& fov);
 	void ProcessMouseMove(float xoffset, float yoffset, GLboolean constrainPitch = true);
 
