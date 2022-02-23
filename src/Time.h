@@ -4,7 +4,7 @@ struct Time
 {
 public:
 	static void Update();
-	static const float& GetDeltaTime();
+	static const float& DeltaTime();
 
 	Time(Time& other) = delete;
 	void operator=(const Time&) = delete;
