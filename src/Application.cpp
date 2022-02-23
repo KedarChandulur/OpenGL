@@ -3,9 +3,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "VertexBufferLayout.h"
 #include "Texture.h"
-#include "Camera.h"
-#include "Time.h"
 #include "CallBackBridge.h"
+#include "Time.h"
 
 int main(void)
 {
@@ -50,6 +49,8 @@ int main(void)
     CallBackBridge callBackBridge;
     callBackBridge.SetWindowResizeCallback(window);
     callBackBridge.SetMouseCallbacks(window, camera);
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     //Adding extra scope for clean up.
     {
