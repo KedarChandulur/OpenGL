@@ -9,7 +9,6 @@
 
 enum class CameraMoveDirection : GLshort
 {
-	None = 0,
 	Forward = -1, //-1 because forward vec(z value) is negative for opengl coord system.
 	Backward = 1, //1 because backward vec(z value) is positive for opengl coord system.
 	Left = -2,
@@ -56,8 +55,8 @@ struct MouseMoveData
 {
 	bool firstMove = true;
 	float sensitivity = 0.3f;
-	glm::vec2 lastPositions;
-	glm::vec2 offsetPositions;
+	glm::vec2 lastPositions = glm::vec2(0.0f);
+	glm::vec2 offsetPositions = glm::vec2(0.0f);
 };
 
 class Camera : I_InputHelper
@@ -79,7 +78,7 @@ public:
 	CameraSettings settings;
 	MouseMoveData mouseMoveData;
 private:
-	void ProcessCameraMovement(CameraMoveDirection cameraMoveDirection = CameraMoveDirection::None);
+	void ProcessCameraMovement(CameraMoveDirection cameraMoveDirection);
 	void UpdateCameraVectors();
 	
 	glm::vec3 m_worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
