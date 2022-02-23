@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include "CallBackBridge.h"
 #include "Time.h"
+#include "Cursor.h"
 
 int main(void)
 {
@@ -45,12 +46,13 @@ int main(void)
 
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
     camera.settings.aspectRatio = (float)screenWidth / (float)screenHeight;
-    
+    camera.mouseMoveData.lastPositions = glm::vec2((float)(screenWidth / 2), (float)(screenHeight / 2));
+
     CallBackBridge callBackBridge;
     callBackBridge.SetWindowResizeCallback(window);
     callBackBridge.SetMouseCallbacks(window, camera);
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    Cursor cursor(window);
 
     //Adding extra scope for clean up.
     {
@@ -136,7 +138,7 @@ int main(void)
         png_logo_texture.Bind(1U);
 
         glm::mat4 model(1.0f), view(model), projection(model);
-        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f,0.0f,0.0f));
+        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
         projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);
 
