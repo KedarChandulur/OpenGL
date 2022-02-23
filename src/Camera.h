@@ -5,10 +5,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW\glfw3.h>
+#include "I_InputHelper.h"
 
 enum class CameraMoveDirection : GLshort
 {
-	None = 0,
 	Forward = -1, //-1 because forward vec(z value) is negative for opengl coord system.
 	Backward = 1, //1 because backward vec(z value) is positive for opengl coord system.
 	Left = -2,
@@ -55,11 +55,11 @@ struct MouseMoveData
 {
 	bool firstMove = true;
 	float sensitivity = 0.3f;
-	glm::vec2 lastPositions;
-	glm::vec2 offsetPositions;
+	glm::vec2 lastPositions = glm::vec2(0.0f);
+	glm::vec2 offsetPositions = glm::vec2(0.0f);
 };
 
-class Camera
+class Camera : I_InputHelper
 {
 public:
 	virtual ~Camera() = default;
@@ -68,7 +68,7 @@ public:
 	Camera(glm::vec3 position = glm::vec3(0.0f), glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = -90.0f, float pitch = 0.0f);
 	Camera(float posX = 0.0f, float posY = 0.0f, float posZ = 0.0f, float upX = 0.0f, float upY = 0.1f, float upZ = 0.0f, float yaw = -90.0f, float pitch = 0.0f);
 
-	void ProcessInput(GLFWwindow* window);
+	void ProcessInput(GLFWwindow* window) override;
 	void ProcessMouseScroll(float yoffset, float& fov);
 	void ProcessMouseMove(float xoffset, float yoffset, GLboolean constrainPitch = true);
 
@@ -78,7 +78,7 @@ public:
 	CameraSettings settings;
 	MouseMoveData mouseMoveData;
 private:
-	void ProcessCameraMovement(CameraMoveDirection cameraMoveDirection = CameraMoveDirection::None);
+	void ProcessCameraMovement(CameraMoveDirection cameraMoveDirection);
 	void UpdateCameraVectors();
 	
 	glm::vec3 m_worldUp = glm::vec3(0.0f, 1.0f, 0.0f);

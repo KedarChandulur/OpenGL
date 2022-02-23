@@ -8,7 +8,7 @@ void Time::Update()
 	lastFrame = currentFrame;
 }
 
-const float& Time::GetDeltaTime()
+const float& Time::DeltaTime()
 {
 	return deltaTime;
 }

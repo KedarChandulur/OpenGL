@@ -43,20 +43,19 @@ void Camera::ProcessCameraMovement(CameraMoveDirection cameraMoveDirection)
 	switch (cameraMoveDirection)
 	{
 	case CameraMoveDirection::Forward:
-		transform.position += cameraConstraints.front * settings.moveSpeed * Time::GetDeltaTime();
+		transform.position += cameraConstraints.front * settings.moveSpeed * Time::DeltaTime();
 		break;
 	case CameraMoveDirection::Backward:
-		transform.position -= cameraConstraints.front * settings.moveSpeed * Time::GetDeltaTime();
+		transform.position -= cameraConstraints.front * settings.moveSpeed * Time::DeltaTime();
 		break;
 	case CameraMoveDirection::Left:
-		transform.position -= cameraConstraints.right * settings.moveSpeed * Time::GetDeltaTime();
+		transform.position -= cameraConstraints.right * settings.moveSpeed * Time::DeltaTime();
 		break;
 	case CameraMoveDirection::Right:
-		transform.position += cameraConstraints.right * settings.moveSpeed * Time::GetDeltaTime();
-		break;
-	case CameraMoveDirection::None:
+		transform.position += cameraConstraints.right * settings.moveSpeed * Time::DeltaTime();
 		break;
 	}
+	//transform.position.y = 0.0f; //To make perfect FPS.
 }
 
 glm::mat4 Camera::GetViewMatrix() const
