@@ -2,7 +2,6 @@
 
 Cursor::Cursor(GLFWwindow* window)
 {
-	isVisible = false;
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
