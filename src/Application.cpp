@@ -2,16 +2,17 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include "VertexBufferLayout.h"
-#include "Texture.h"
 #include "CallBackBridge.h"
 #include "Time.h"
 #include "Cursor.h"
 
+#pragma region CallBackBridge_Method
 //Reference taken from: https://github.com/glfw/glfw/issues/815#issuecomment-235986227
 //CallBackBridge* Get_CallBackBridgeContext(GLFWwindow* window)
 //{
 //    return static_cast<CallBackBridge*>(glfwGetWindowUserPointer(window));
 //};
+#pragma endregion
 
 int main(void)
 {
@@ -61,108 +62,114 @@ int main(void)
 
     Cursor cursor(window);
 
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
     //Adding extra scope for clean up.
     {
         //Texture::SetBlendFunction(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_DEPTH_TEST);
 
-        VertexBufferLayout layout;
+        VertexBufferLayout vertexBufferLayout;
 
+        #pragma region OldVertexArray_Reference
         //float vertexBufferArray[] = {
-        //    //positions   //text coord  //colors            
-        //    -0.5f, -0.5f, 0.0f, 0.0f,   //1.0f, 0.0f, 0.0f, //0
-        //     0.5f, -0.5f, 1.0f, 0.0f,   //0.0f, 1.0f, 0.0f, //1
-        //     0.5f,  0.5f, 1.0f, 1.0f,   //0.0f, 0.0f, 1.0f, //2
-        //    -0.5f,  0.5f, 0.0f, 1.0f,   //0.0f, 0.0f, 0.0f  //3
+        //    //positions     //text coord   //colors            
+        //    -0.5f, -0.5f,   0.0f, 0.0f,    //1.0f, 0.0f, 0.0f, //0
+        //     0.5f, -0.5f,   1.0f, 0.0f,    //0.0f, 1.0f, 0.0f, //1
+        //     0.5f,  0.5f,   1.0f, 1.0f,    //0.0f, 0.0f, 1.0f, //2
+        //    -0.5f,  0.5f,   0.0f, 1.0f,    //0.0f, 0.0f, 0.0f  //3
         //};
+        //vertexBufferLayout.Push<float>(2); //positions.
+        //vertexBufferLayout.Push<float>(2); //text coord.
+        //vertexBufferLayout.Push<float>(3); //colors.
+        #pragma endregion
 
         float vertexBufferArray[] = {
-              -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-               0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-               0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-               0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-              -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-              -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+              -0.5f, -0.5f, -0.5f,
+               0.5f, -0.5f, -0.5f,
+               0.5f,  0.5f, -0.5f,
+               0.5f,  0.5f, -0.5f,
+              -0.5f,  0.5f, -0.5f,
+              -0.5f, -0.5f, -0.5f,
 
-              -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-               0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-               0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-               0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-              -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-              -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+              -0.5f, -0.5f,  0.5f,
+               0.5f, -0.5f,  0.5f,
+               0.5f,  0.5f,  0.5f,
+               0.5f,  0.5f,  0.5f,
+              -0.5f,  0.5f,  0.5f,
+              -0.5f, -0.5f,  0.5f,
 
-              -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-              -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-              -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-              -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-              -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-              -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+              -0.5f,  0.5f,  0.5f,
+              -0.5f,  0.5f, -0.5f,
+              -0.5f, -0.5f, -0.5f,
+              -0.5f, -0.5f, -0.5f,
+              -0.5f, -0.5f,  0.5f,
+              -0.5f,  0.5f,  0.5f,
 
-               0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-               0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-               0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-               0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-               0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-               0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+               0.5f,  0.5f,  0.5f,
+               0.5f,  0.5f, -0.5f,
+               0.5f, -0.5f, -0.5f,
+               0.5f, -0.5f, -0.5f,
+               0.5f, -0.5f,  0.5f,
+               0.5f,  0.5f,  0.5f,
 
-              -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-               0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-               0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-               0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-              -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-              -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+              -0.5f, -0.5f, -0.5f,
+               0.5f, -0.5f, -0.5f,
+               0.5f, -0.5f,  0.5f,
+               0.5f, -0.5f,  0.5f,
+              -0.5f, -0.5f,  0.5f,
+              -0.5f, -0.5f, -0.5f,
 
-              -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-               0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-               0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-               0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-              -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-              -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+              -0.5f,  0.5f, -0.5f,
+               0.5f,  0.5f, -0.5f,
+               0.5f,  0.5f,  0.5f,
+               0.5f,  0.5f,  0.5f,
+              -0.5f,  0.5f,  0.5f,
+              -0.5f,  0.5f, -0.5f
         };
 
-        //layout.Push<float>(2); //positions.
-        layout.Push<float>(3); //positions.
-        layout.Push<float>(2); //text coord.
-        //layout.Push<float>(3); //colors.
+        vertexBufferLayout.Push<float>(3); //positions.
 
-        VertexBuffer vb(vertexBufferArray, sizeof(vertexBufferArray));
-        VertexArray va;
-        va.AddBuffer(vb, layout);
+        VertexBuffer vertexBuffer(vertexBufferArray, sizeof(vertexBufferArray));
+        VertexArray objectVertexArray;
+        objectVertexArray.AddBuffer(vertexBuffer, vertexBufferLayout);
+
+        VertexArray lightVertexArray;
+        lightVertexArray.AddBuffer(vertexBuffer, vertexBufferLayout);
 
         unsigned int indices[] = {
             0, 1, 2,
             2, 3, 0
         };
-        IndexBuffer ib(indices, 6);
+        IndexBuffer indexBuffer(indices, 6);
 
-        Shader shader("res/Shaders/Basic.shader");
-        shader.Bind();
-
-        //Texture jpg_texture("res/Textures/wall.jpg");
-        Texture jpg_texture("res/Textures/container.jpg");
-        Texture png_logo_texture("res/Textures/awesomeface.png");
-        jpg_texture.Bind(0U);
-        png_logo_texture.Bind(1U);
+        Shader objectShader("res/Shaders/Basic.shader");
+        objectShader.Bind();
 
         glm::mat4 model(1.0f), view(model), projection(model);
         model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
         projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);
 
-        shader.SetUniform1i("u_Texture", 0);
-        shader.SetUniform1i("u_Texture1", 1);
-        shader.SetUniformMat4fp("model", glm::value_ptr(model));
-        shader.SetUniformMat4f("view", view);
-        shader.SetUniformMat4f("projection", projection);
+        objectShader.SetUniformMat4fp("model", glm::value_ptr(model));
+        objectShader.SetUniformMat4f("view", view);
+        objectShader.SetUniformMat4f("projection", projection);
 
-        glm::vec3 cameraTarget = glm::vec3(0.0f);
-        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-        const float radius = 10.0f;
+        objectShader.SetVec3("lightColor", 1.0f);
+        objectShader.SetVec3("objectColor", 1.0f, 0.5f, 0.31f);
 
-        va.UnBind();
-        vb.UnBind();
-        ib.UnBind();
-        shader.UnBind();
+        Shader lightShader("res/Shaders/Light.shader");
+        lightShader.Bind();
+
+        objectVertexArray.UnBind();
+        lightVertexArray.UnBind();
+
+        vertexBuffer.UnBind();
+        indexBuffer.UnBind();
+
+        objectShader.UnBind();
+        lightShader.UnBind();
+
 
         while (!glfwWindowShouldClose(window))
         {
@@ -172,14 +179,28 @@ int main(void)
             camera.ProcessInput(window);
 
             Renderer::Clear();
-            Renderer::Draw(va, ib, shader);
 
-            //Updating projection matrix again because fov is be changed through mouse scroll.
+            Renderer::Draw(objectVertexArray, indexBuffer, objectShader);
+
+            //Updating projection matrix again because fov is being changed through mouse scroll.
             projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);
-            shader.SetUniformMat4f("projection", projection);
-
             view = camera.GetViewMatrix();
-            shader.SetUniformMat4f("view", view);
+            objectShader.SetUniformMat4f("projection", projection);
+            objectShader.SetUniformMat4f("view", view);
+
+            // world transformation
+            glm::mat4 model_L = glm::mat4(1.0f);
+            //objectShader.SetUniformMat4fp("model", glm::value_ptr(model_L));
+
+            Renderer::Draw(lightVertexArray, lightShader);
+
+            lightShader.SetUniformMat4f("projection", projection);
+            lightShader.SetUniformMat4f("view", view);
+            
+            //model_L = glm::mat4(1.0f);
+            model_L = glm::translate(model_L, lightPos);
+            model_L = glm::scale(model_L, glm::vec3(0.2f));
+            lightShader.SetUniformMat4fp("model", glm::value_ptr(model_L));
 
             glfwSwapBuffers(window);
             glfwPollEvents();
