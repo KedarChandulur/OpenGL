@@ -7,6 +7,11 @@
 #include "Time.h"
 #include "Cursor.h"
 
+//CallBackBridge* Get_CallBackBridgeContext(GLFWwindow* window)
+//{
+//    return static_cast<CallBackBridge*>(glfwGetWindowUserPointer(window));
+//};
+
 int main(void)
 {
     GLFWwindow* window;
@@ -49,6 +54,7 @@ int main(void)
     camera.mouseMoveData.lastPositions = glm::vec2((float)(screenWidth / 2), (float)(screenHeight / 2));
 
     CallBackBridge callBackBridge;
+    //glfwSetWindowUserPointer(window, &callBackBridge);
     callBackBridge.SetWindowResizeCallback(window);
     callBackBridge.SetMouseCallbacks(window, camera);
 
