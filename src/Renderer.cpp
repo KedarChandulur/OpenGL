@@ -43,6 +43,14 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
+void Renderer::Draw(const VertexArray& va, const Shader& shader)
+{
+    shader.Bind();
+    va.Bind();
+    //GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
 void Renderer::ProcessInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
