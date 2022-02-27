@@ -7,6 +7,7 @@
 #include "Time.h"
 #include "Cursor.h"
 
+//Reference taken from: https://github.com/glfw/glfw/issues/815#issuecomment-235986227
 //CallBackBridge* Get_CallBackBridgeContext(GLFWwindow* window)
 //{
 //    return static_cast<CallBackBridge*>(glfwGetWindowUserPointer(window));
