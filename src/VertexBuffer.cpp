@@ -23,3 +23,9 @@ void VertexBuffer::UnBind() const
 {
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
+
+//Temporarly created for light vbo.
+const unsigned int& VertexBuffer::GetRendererID() const
+{
+    return m_RendererID;
+}
