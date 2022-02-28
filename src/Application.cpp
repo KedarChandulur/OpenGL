@@ -62,7 +62,7 @@ int main(void)
 
     Cursor cursor(window);
 
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+    glm::vec3 lightPos(1.2f, 10.0f, 2.0f);
 
     //Adding extra scope for clean up.
     {
@@ -71,7 +71,7 @@ int main(void)
 
         VertexBufferLayout vertexBufferLayout;
 
-        #pragma region OldVertexArray_Reference
+        #pragma region OldBuffer_Reference
         //float vertexBufferArray[] = {
         //    //positions     //text coord   //colors            
         //    -0.5f, -0.5f,   0.0f, 0.0f,    //1.0f, 0.0f, 0.0f, //0
@@ -82,6 +82,13 @@ int main(void)
         //vertexBufferLayout.Push<float>(2); //positions.
         //vertexBufferLayout.Push<float>(2); //text coord.
         //vertexBufferLayout.Push<float>(3); //colors.
+
+        /*unsigned int indexBufferArray[] = {
+            0, 1, 2,
+            2, 3, 0
+        };
+        
+        IndexBuffer indexBuffer(indexBufferArray, 6);*/
         #pragma endregion
 
         float vertexBufferArray[] = {
@@ -137,12 +144,6 @@ int main(void)
         VertexArray lightVertexArray;
         lightVertexArray.AddBuffer(vertexBuffer, vertexBufferLayout);
 
-        unsigned int indices[] = {
-            0, 1, 2,
-            2, 3, 0
-        };
-        IndexBuffer indexBuffer(indices, 6);
-
         Shader objectShader("res/Shaders/Basic.shader");
         objectShader.Bind();
 
@@ -165,7 +166,6 @@ int main(void)
         lightVertexArray.UnBind();
 
         vertexBuffer.UnBind();
-        indexBuffer.UnBind();
 
         objectShader.UnBind();
         lightShader.UnBind();
@@ -179,8 +179,7 @@ int main(void)
             camera.ProcessInput(window);
 
             Renderer::Clear();
-
-            Renderer::Draw(objectVertexArray, indexBuffer, objectShader);
+            Renderer::Draw(objectVertexArray, objectShader);
 
             //Updating projection matrix again because fov is being changed through mouse scroll.
             projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);
@@ -190,7 +189,7 @@ int main(void)
 
             // world transformation
             glm::mat4 model_L = glm::mat4(1.0f);
-            //objectShader.SetUniformMat4fp("model", glm::value_ptr(model_L));
+            objectShader.SetUniformMat4fp("model", glm::value_ptr(model_L));
 
             Renderer::Draw(lightVertexArray, lightShader);
 
