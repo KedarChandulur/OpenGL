@@ -26,7 +26,6 @@ class Renderer
 public:
     static void Clear();
     static void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader);
-    //Used for light shader and vertex binding.
     static void Draw(const VertexArray& va, const Shader& shader);
     static void ProcessInput(GLFWwindow* window);
 
