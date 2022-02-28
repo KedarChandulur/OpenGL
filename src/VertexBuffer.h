@@ -8,6 +8,9 @@ public:
 
 	void Bind() const;
 	void UnBind() const;
+
+	//Temporarly created for light vbo.
+	const unsigned int& GetRendererID() const;
 private:
 	unsigned int m_RendererID;
 };
