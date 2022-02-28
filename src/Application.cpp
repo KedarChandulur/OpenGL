@@ -62,7 +62,8 @@ int main(void)
 
     Cursor cursor(window);
 
-    glm::vec3 lightPos(1.2f, 10.0f, 2.0f);
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+    //glm::vec3 lightPos(3.0f, 2.0f, 1.0f);
 
     //Adding extra scope for clean up.
     {
@@ -92,57 +93,56 @@ int main(void)
         #pragma endregion
 
         float vertexBufferArray[] = {
-              -0.5f, -0.5f, -0.5f,
-               0.5f, -0.5f, -0.5f,
-               0.5f,  0.5f, -0.5f,
-               0.5f,  0.5f, -0.5f,
-              -0.5f,  0.5f, -0.5f,
-              -0.5f, -0.5f, -0.5f,
+            //Positions             //Normals
+            -0.5f, -0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
+             0.5f, -0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
+             0.5f,  0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
+             0.5f,  0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
+            -0.5f,  0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
+            -0.5f, -0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
 
-              -0.5f, -0.5f,  0.5f,
-               0.5f, -0.5f,  0.5f,
-               0.5f,  0.5f,  0.5f,
-               0.5f,  0.5f,  0.5f,
-              -0.5f,  0.5f,  0.5f,
-              -0.5f, -0.5f,  0.5f,
+            -0.5f, -0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
 
-              -0.5f,  0.5f,  0.5f,
-              -0.5f,  0.5f, -0.5f,
-              -0.5f, -0.5f, -0.5f,
-              -0.5f, -0.5f, -0.5f,
-              -0.5f, -0.5f,  0.5f,
-              -0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
 
-               0.5f,  0.5f,  0.5f,
-               0.5f,  0.5f, -0.5f,
-               0.5f, -0.5f, -0.5f,
-               0.5f, -0.5f, -0.5f,
-               0.5f, -0.5f,  0.5f,
-               0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,     1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,     1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,     1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,     1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,     1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,     1.0f,  0.0f,  0.0f,
 
-              -0.5f, -0.5f, -0.5f,
-               0.5f, -0.5f, -0.5f,
-               0.5f, -0.5f,  0.5f,
-               0.5f, -0.5f,  0.5f,
-              -0.5f, -0.5f,  0.5f,
-              -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,     0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,     0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,     0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,     0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,     0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,     0.0f, -1.0f,  0.0f,
 
-              -0.5f,  0.5f, -0.5f,
-               0.5f,  0.5f, -0.5f,
-               0.5f,  0.5f,  0.5f,
-               0.5f,  0.5f,  0.5f,
-              -0.5f,  0.5f,  0.5f,
-              -0.5f,  0.5f, -0.5f
+            -0.5f,  0.5f, -0.5f,     0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,     0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,     0.0f,  1.0f,  0.0f
         };
 
         vertexBufferLayout.Push<float>(3); //positions.
+        vertexBufferLayout.Push<float>(3); //normals.
 
         VertexBuffer vertexBuffer(vertexBufferArray, sizeof(vertexBufferArray));
         VertexArray objectVertexArray;
         objectVertexArray.AddBuffer(vertexBuffer, vertexBufferLayout);
-
-        VertexArray lightVertexArray;
-        lightVertexArray.AddBuffer(vertexBuffer, vertexBufferLayout);
 
         Shader objectShader("res/Shaders/Basic.shader");
         objectShader.Bind();
@@ -158,18 +158,27 @@ int main(void)
 
         objectShader.SetVec3("lightColor", 1.0f);
         objectShader.SetVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        objectShader.SetVec3("lightPos", lightPos);
+        objectShader.SetVec3("viewPos", camera.transform.position);
 
         Shader lightShader("res/Shaders/Light.shader");
         lightShader.Bind();
 
         objectVertexArray.UnBind();
-        lightVertexArray.UnBind();
 
         vertexBuffer.UnBind();
 
         objectShader.UnBind();
         lightShader.UnBind();
 
+        unsigned int lightCubeVAO;
+        GLCall(glGenVertexArrays(1, &lightCubeVAO));
+        GLCall(glBindVertexArray(lightCubeVAO));
+              
+        GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.GetRendererID()));
+        // note that we update the light's position attribute's stride to reflect the buffer data
+        GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0));
+        GLCall(glEnableVertexAttribArray(0));
 
         while (!glfwWindowShouldClose(window))
         {
@@ -181,29 +190,34 @@ int main(void)
             Renderer::Clear();
             Renderer::Draw(objectVertexArray, objectShader);
 
+            /*lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
+            lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
+            objectShader.SetVec3("lightPos", lightPos);
+            objectShader.SetVec3("viewPos", camera.transform.position);*/
+
             //Updating projection matrix again because fov is being changed through mouse scroll.
             projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);
             view = camera.GetViewMatrix();
             objectShader.SetUniformMat4f("projection", projection);
             objectShader.SetUniformMat4f("view", view);
-
             // world transformation
             glm::mat4 model_L = glm::mat4(1.0f);
             objectShader.SetUniformMat4fp("model", glm::value_ptr(model_L));
 
-            Renderer::Draw(lightVertexArray, lightShader);
-
+            lightShader.Bind();
             lightShader.SetUniformMat4f("projection", projection);
-            lightShader.SetUniformMat4f("view", view);
-            
-            //model_L = glm::mat4(1.0f);
+            lightShader.SetUniformMat4f("view", view);            
+            model_L = glm::mat4(1.0f);
             model_L = glm::translate(model_L, lightPos);
             model_L = glm::scale(model_L, glm::vec3(0.2f));
             lightShader.SetUniformMat4fp("model", glm::value_ptr(model_L));
+            GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
 
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
+
+        GLCall(glDeleteVertexArrays(1, &lightCubeVAO));
     }
 
     glfwTerminate();
