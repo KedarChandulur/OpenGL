@@ -51,7 +51,7 @@ int main(void)
 
     GLCall(glViewport(0, 0, screenWidth, screenHeight));
 
-    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+    Camera camera(glm::vec3(0.0f, 0.0f, 6.0f));
     camera.settings.aspectRatio = (float)screenWidth / (float)screenHeight;
     camera.mouseMoveData.lastPositions = glm::vec2((float)(screenWidth / 2), (float)(screenHeight / 2));
 
@@ -146,20 +146,26 @@ int main(void)
 
         Shader objectShader("res/Shaders/Basic.shader");
         objectShader.Bind();
-
-        glm::mat4 model(1.0f), view(model), projection(model);
-        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);
-
-        objectShader.SetUniformMat4fp("model", glm::value_ptr(model));
-        objectShader.SetUniformMat4f("view", view);
-        objectShader.SetUniformMat4f("projection", projection);
-
-        objectShader.SetVec3("lightColor", 1.0f);
-        objectShader.SetVec3("objectColor", 1.0f, 0.5f, 0.31f);
-        objectShader.SetVec3("lightPos", lightPos);
+                
+        objectShader.SetVec3("light.position", lightPos);
         objectShader.SetVec3("viewPos", camera.transform.position);
+
+        glm::vec3 lightColor;
+        lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0f));
+        lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7f));
+        lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3f));
+
+        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
+        objectShader.SetVec3("light.ambient", ambientColor);
+        objectShader.SetVec3("light.diffuse", diffuseColor);
+        objectShader.SetVec3("light.specular", 1.0f);
+
+        objectShader.SetUniform1f("material.shininess", 32.0f);
+        objectShader.SetVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+        objectShader.SetVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        objectShader.SetVec3("material.specular", 0.5f, 0.5f, 0.5f);
 
         Shader lightShader("res/Shaders/Light.shader");
         lightShader.Bind();
@@ -170,6 +176,8 @@ int main(void)
 
         objectShader.UnBind();
         lightShader.UnBind();
+
+        glm::mat4 model(1.0f), view(model), projection(model);
 
         unsigned int lightCubeVAO;
         GLCall(glGenVertexArrays(1, &lightCubeVAO));
