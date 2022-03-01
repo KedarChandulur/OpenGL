@@ -12,4 +12,5 @@ The code has multiple dependencies
 - glm - https://github.com/g-truc/glm/tree/master/glm
 - stb_image.h -> https://github.com/nothings/stb/blob/master/stb_image.h
 
-_Current master branch has work till the Camera class._
+_Current master branch has work till the Camera class,_
+_Currently working on Lighting part._
