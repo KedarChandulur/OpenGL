@@ -5,6 +5,7 @@
 #include "CallBackBridge.h"
 #include "Time.h"
 #include "Cursor.h"
+#include "Texture.h"
 
 #pragma region CallBackBridge_Method
 //Reference taken from: https://github.com/glfw/glfw/issues/815#issuecomment-235986227
@@ -93,52 +94,53 @@ int main(void)
         #pragma endregion
 
         float vertexBufferArray[] = {
-            //Positions             //Normals
-            -0.5f, -0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
-             0.5f, -0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
-             0.5f,  0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
-             0.5f,  0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
-            -0.5f,  0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
-            -0.5f, -0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
+            //Positions           //Normals             //Texture Coords
+            -0.5f, -0.5f, -0.5f,   0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,   0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,   0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+             0.5f,  0.5f, -0.5f,   0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+            -0.5f,  0.5f, -0.5f,   0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f,   0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-            -0.5f, -0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
-            -0.5f,  0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f,     0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,   0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,   0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,   0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+             0.5f,  0.5f,  0.5f,   0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+            -0.5f,  0.5f,  0.5f,   0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f,  0.5f,   0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-            -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
-            -0.5f,  0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
-            -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
-            -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
-            -0.5f, -0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
-            -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,  -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f,  -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f,  -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f,  0.5f,  -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-             0.5f,  0.5f,  0.5f,     1.0f,  0.0f,  0.0f,
-             0.5f,  0.5f, -0.5f,     1.0f,  0.0f,  0.0f,
-             0.5f, -0.5f, -0.5f,     1.0f,  0.0f,  0.0f,
-             0.5f, -0.5f, -0.5f,     1.0f,  0.0f,  0.0f,
-             0.5f, -0.5f,  0.5f,     1.0f,  0.0f,  0.0f,
-             0.5f,  0.5f,  0.5f,     1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,   1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,   1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+             0.5f, -0.5f, -0.5f,   1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+             0.5f, -0.5f, -0.5f,   1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+             0.5f, -0.5f,  0.5f,   1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,   1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-            -0.5f, -0.5f, -0.5f,     0.0f, -1.0f,  0.0f,
-             0.5f, -0.5f, -0.5f,     0.0f, -1.0f,  0.0f,
-             0.5f, -0.5f,  0.5f,     0.0f, -1.0f,  0.0f,
-             0.5f, -0.5f,  0.5f,     0.0f, -1.0f,  0.0f,
-            -0.5f, -0.5f,  0.5f,     0.0f, -1.0f,  0.0f,
-            -0.5f, -0.5f, -0.5f,     0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,   0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+             0.5f, -0.5f, -0.5f,   0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+             0.5f, -0.5f,  0.5f,   0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,   0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,   0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,   0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 
-            -0.5f,  0.5f, -0.5f,     0.0f,  1.0f,  0.0f,
-             0.5f,  0.5f, -0.5f,     0.0f,  1.0f,  0.0f,
-             0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,
-             0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,
-            -0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,
-            -0.5f,  0.5f, -0.5f,     0.0f,  1.0f,  0.0f
+            -0.5f,  0.5f, -0.5f,   0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+             0.5f,  0.5f, -0.5f,   0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+             0.5f,  0.5f,  0.5f,   0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,   0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,   0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,   0.0f,  1.0f,  0.0f,  0.0f,  1.0f
         };
 
         vertexBufferLayout.Push<float>(3); //positions.
         vertexBufferLayout.Push<float>(3); //normals.
+        vertexBufferLayout.Push<float>(2); //texture coords.
 
         VertexBuffer vertexBuffer(vertexBufferArray, sizeof(vertexBufferArray));
         VertexArray objectVertexArray;
@@ -162,10 +164,14 @@ int main(void)
         objectShader.SetVec3("light.diffuse", diffuseColor);
         objectShader.SetVec3("light.specular", 1.0f);
 
-        objectShader.SetUniform1f("material.shininess", 32.0f);
-        objectShader.SetVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-        objectShader.SetVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        objectShader.SetUniform1f("material.shininess", 64.0f);
+        //objectShader.SetVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+        //objectShader.SetVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
         objectShader.SetVec3("material.specular", 0.5f, 0.5f, 0.5f);
+
+        Texture containerTextureNormal("res/Textures/container2.png");
+        objectShader.SetUniform1i("material.diffuse", 0);
+        containerTextureNormal.Bind(0U);
 
         Shader lightShader("res/Shaders/Light.shader");
         lightShader.Bind();
@@ -177,6 +183,8 @@ int main(void)
         objectShader.UnBind();
         lightShader.UnBind();
 
+        containerTextureNormal.UnBind();
+
         glm::mat4 model(1.0f), view(model), projection(model);
 
         unsigned int lightCubeVAO;
@@ -185,7 +193,7 @@ int main(void)
               
         GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.GetRendererID()));
         // note that we update the light's position attribute's stride to reflect the buffer data
-        GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0));
+        GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0));
         GLCall(glEnableVertexAttribArray(0));
 
         while (!glfwWindowShouldClose(window))
@@ -197,6 +205,7 @@ int main(void)
 
             Renderer::Clear();
             Renderer::Draw(objectVertexArray, objectShader);
+            containerTextureNormal.Bind(0U);
 
             /*lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
             lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
