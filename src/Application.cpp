@@ -63,8 +63,9 @@ int main(void)
 
     Cursor cursor(window);
 
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-    //glm::vec3 lightPos(3.0f, 2.0f, 1.0f);
+    glm::vec3 lightPos(1.25f, 1.5f, 2.0f);
+    //glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+    //glm::vec3 lightPos(1.0f, 0.0f, 2.0f);
 
     //Adding extra scope for clean up.
     {
@@ -152,29 +153,23 @@ int main(void)
         objectShader.SetVec3("light.position", lightPos);
         objectShader.SetVec3("viewPos", camera.transform.position);
 
-        glm::vec3 lightColor;
-        lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0f));
-        lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7f));
-        lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3f));
-
-        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
-        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
-
-        objectShader.SetVec3("light.ambient", ambientColor);
-        objectShader.SetVec3("light.diffuse", diffuseColor);
+        glm::vec3 lightColor(1.0f);       
+        objectShader.SetVec3("light.ambient", 0.2f);
+        objectShader.SetVec3("light.diffuse", 0.5f);
         objectShader.SetVec3("light.specular", 1.0f);
 
-        objectShader.SetUniform1f("material.shininess", 64.0f);
-        //objectShader.SetVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-        //objectShader.SetVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-        objectShader.SetVec3("material.specular", 0.5f, 0.5f, 0.5f);
-
-        Texture containerTextureNormal("res/Textures/container2.png");
         objectShader.SetUniform1i("material.diffuse", 0);
-        containerTextureNormal.Bind(0U);
+        objectShader.SetUniform1i("material.specular", 1);
+        objectShader.SetUniform1f("material.shininess", 64.0f);
 
         Shader lightShader("res/Shaders/Light.shader");
         lightShader.Bind();
+
+        Texture containerTextureNormal("res/Textures/container2.png");
+        containerTextureNormal.Bind(0U);
+
+        Texture containerTextureSpecular("res/Textures/container2_specular.png");
+        containerTextureSpecular.Bind(1U);
 
         objectVertexArray.UnBind();
 
@@ -184,6 +179,7 @@ int main(void)
         lightShader.UnBind();
 
         containerTextureNormal.UnBind();
+        containerTextureSpecular.UnBind();
 
         glm::mat4 model(1.0f), view(model), projection(model);
 
@@ -206,11 +202,21 @@ int main(void)
             Renderer::Clear();
             Renderer::Draw(objectVertexArray, objectShader);
             containerTextureNormal.Bind(0U);
+            containerTextureSpecular.Bind(1U);
 
             /*lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
             lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
             objectShader.SetVec3("lightPos", lightPos);
             objectShader.SetVec3("viewPos", camera.transform.position);*/
+
+            /*lightColor = glm::vec3(1.0f);
+            lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0f));
+            lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7f));
+            lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3f));
+            glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+            glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+            objectShader.SetVec3("light.ambient", ambientColor);
+            objectShader.SetVec3("light.diffuse", diffuseColor);*/
 
             //Updating projection matrix again because fov is being changed through mouse scroll.
             projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);

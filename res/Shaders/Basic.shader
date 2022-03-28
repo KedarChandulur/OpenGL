@@ -23,6 +23,7 @@ void main()
    fragTexCoords = texCoords;
 
    gl_Position = projection * view * model * vec4(position, 1.0);
+   //gl_Position = projection * view * vec4(position, 1.0);
 };
 
 #shader fragment
@@ -34,7 +35,7 @@ layout(location = 0) out vec4 color;
 struct Material
 {	
 	sampler2D diffuse;
-	vec3 specular;
+	sampler2D specular;
 	float shininess;
 };
 
@@ -69,7 +70,7 @@ void main()
 	vec3 viewDirection = normalize(viewPos - fragPosition);
 	vec3 reflectionDirection = reflect(-lightDirection, Normal);
 	float specularComponent = pow(max(dot(viewDirection, reflectionDirection), 0.0), material.shininess);
-	vec3 specular = light.specular * (specularComponent * material.specular);
+	vec3 specular = light.specular * specularComponent * texture(material.specular, fragTexCoords).rgb;
 
 	vec3 result = ambient + diffuse + specular;
 	color = vec4(result, 1.0);
