@@ -150,7 +150,8 @@ int main(void)
         Shader objectShader("res/Shaders/Basic.shader");
         objectShader.Bind();
                 
-        objectShader.SetVec3("light.position", lightPos);
+        //objectShader.SetVec3("light.position", lightPos);
+        objectShader.SetVec3("light.direction", -0.2f, -1.0f, -0.3f);
         objectShader.SetVec3("viewPos", camera.transform.position);
 
         glm::vec3 lightColor(1.0f);       
@@ -192,6 +193,20 @@ int main(void)
         GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0));
         GLCall(glEnableVertexAttribArray(0));
 
+        //Testing code
+        glm::vec3 cubePositions[] = {
+            glm::vec3(0.0f,  0.0f,  0.0f),
+            glm::vec3(2.0f,  5.0f, -15.0f),
+            glm::vec3(-1.5f, -2.2f, -2.5f),
+            glm::vec3(-3.8f, -2.0f, -12.3f),
+            glm::vec3(2.4f, -0.4f, -3.5f),
+            glm::vec3(-1.7f,  3.0f, -7.5f),
+            glm::vec3(1.3f, -2.0f, -2.5f),
+            glm::vec3(1.5f,  2.0f, -2.5f),
+            glm::vec3(1.5f,  0.2f, -1.5f),
+            glm::vec3(-1.3f,  1.0f, -1.5f)
+        };
+
         while (!glfwWindowShouldClose(window))
         {
             Time::Update();
@@ -201,8 +216,22 @@ int main(void)
 
             Renderer::Clear();
             Renderer::Draw(objectVertexArray, objectShader);
+            
             containerTextureNormal.Bind(0U);
             containerTextureSpecular.Bind(1U);
+
+            //Testing code
+            for (unsigned int i = 0; i < 10; i++)
+            {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::translate(model, cubePositions[i]);
+                float angle = 20.0f * i;
+                model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+                //objectShader.SetUniformMat4fp("model", glm::value_ptr(model));
+                objectShader.SetUniformMat4f("model", model);
+
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }
 
             /*lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
             lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
