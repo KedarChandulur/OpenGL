@@ -44,7 +44,8 @@ struct Light
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
-	vec3 position;
+	//vec3 position; //Position is not considered if it is a direction light, as directional light position is considered infinity far away(Sun for instance)
+	vec3 direction;
 };
 
 in vec3 fragPosition;
@@ -62,7 +63,8 @@ void main()
 
 	//Diffuse light calculation.
 	vec3 Normal = normalize(fragNormal);
-	vec3 lightDirection = normalize(light.position - fragPosition);
+	//vec3 lightDirection = normalize(light.position - fragPosition);
+	vec3 lightDirection = normalize(-light.direction);
 	float diffuseImpact = max(dot(Normal, lightDirection), 0.0);
 	vec3 diffuse = light.diffuse * diffuseImpact * texture(material.diffuse, fragTexCoords).rgb;
 
