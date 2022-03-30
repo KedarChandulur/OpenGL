@@ -63,9 +63,9 @@ int main(void)
 
     Cursor cursor(window);
 
-    glm::vec3 lightPos(1.25f, 1.5f, 2.0f);
-    //glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-    //glm::vec3 lightPos(1.0f, 0.0f, 2.0f);
+    //glm::vec3 lightPos(1.25f, 1.5f, 2.0f);
+    //glm::vec3 lightPos(0.8f, 0.0f, 0.5f);
+    glm::vec3 lightPos(0.0f, 0.0f, 7.0f);
 
     //Adding extra scope for clean up.
     {
@@ -150,8 +150,11 @@ int main(void)
         Shader objectShader("res/Shaders/Basic.shader");
         objectShader.Bind();
                 
-        //objectShader.SetVec3("light.position", lightPos);
-        objectShader.SetVec3("light.direction", -0.2f, -1.0f, -0.3f);
+        objectShader.SetVec3("light.position", lightPos);
+        //objectShader.SetVec3("light.direction", -0.2f, -1.0f, -0.3f);
+        objectShader.SetUniform1f("light.constant", 1.0f);
+        objectShader.SetUniform1f("light.linear_value", 0.09f);
+        objectShader.SetUniform1f("light.quadratic", 0.032f);
         objectShader.SetVec3("viewPos", camera.transform.position);
 
         glm::vec3 lightColor(1.0f);       
@@ -217,9 +220,6 @@ int main(void)
             Renderer::Clear();
             Renderer::Draw(objectVertexArray, objectShader);
             
-            containerTextureNormal.Bind(0U);
-            containerTextureSpecular.Bind(1U);
-
             //Testing code
             for (unsigned int i = 0; i < 10; i++)
             {
@@ -232,6 +232,9 @@ int main(void)
 
                 glDrawArrays(GL_TRIANGLES, 0, 36);
             }
+
+            containerTextureNormal.Bind(0U);
+            containerTextureSpecular.Bind(1U);            
 
             /*lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
             lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;

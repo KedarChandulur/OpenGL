@@ -44,8 +44,11 @@ struct Light
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
-	//vec3 position; //Position is not considered if it is a direction light, as directional light position is considered infinity far away(Sun for instance)
-	vec3 direction;
+	vec3 position;
+	
+	float constant;
+	float linear_value;
+	float quadratic;
 };
 
 in vec3 fragPosition;
@@ -63,8 +66,9 @@ void main()
 
 	//Diffuse light calculation.
 	vec3 Normal = normalize(fragNormal);
-	//vec3 lightDirection = normalize(light.position - fragPosition);
-	vec3 lightDirection = normalize(-light.direction);
+	vec3 lightDirection = normalize(light.position - fragPosition);
+	//vec3 lightDirection = normalize(-light.direction);
+
 	float diffuseImpact = max(dot(Normal, lightDirection), 0.0);
 	vec3 diffuse = light.diffuse * diffuseImpact * texture(material.diffuse, fragTexCoords).rgb;
 
@@ -73,6 +77,13 @@ void main()
 	vec3 reflectionDirection = reflect(-lightDirection, Normal);
 	float specularComponent = pow(max(dot(viewDirection, reflectionDirection), 0.0), material.shininess);
 	vec3 specular = light.specular * specularComponent * texture(material.specular, fragTexCoords).rgb;
+
+	float distance = length(light.position - fragPosition);
+	float attenuation = 1.0 / (light.constant + light.linear_value * distance + light.quadratic * (distance * distance));
+
+	ambient *= attenuation;
+	diffuse *= attenuation;
+	specular *= attenuation;
 
 	vec3 result = ambient + diffuse + specular;
 	color = vec4(result, 1.0);
