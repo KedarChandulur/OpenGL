@@ -78,13 +78,13 @@ public:
 	CameraSettings settings;
 	MouseMoveData mouseMoveData;
 	Transform transform;
+	CameraConstraints cameraConstraints;
 private:
 	void ProcessCameraMovement(CameraMoveDirection cameraMoveDirection);
 	void UpdateCameraVectors();
 	
 	glm::vec3 m_worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	EulerAngles eulerAngles;
-	CameraConstraints cameraConstraints;
+	EulerAngles eulerAngles;	
 };
 
 #endif
