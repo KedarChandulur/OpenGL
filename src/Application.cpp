@@ -154,6 +154,7 @@ int main(void)
         //objectShader.SetVec3("light.direction", -0.2f, -1.0f, -0.3f);
 
         objectShader.SetUniform1f("light.cutOff", glm::cos(glm::radians(7.0f)));
+        objectShader.SetUniform1f("light.outerCutOff", glm::cos(glm::radians(12.0f)));
 
         objectShader.SetUniform1f("light.constant", 1.0f);
         objectShader.SetUniform1f("light.linear_value", 0.09f);
