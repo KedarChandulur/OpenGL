@@ -150,8 +150,11 @@ int main(void)
         Shader objectShader("res/Shaders/Basic.shader");
         objectShader.Bind();
                 
-        objectShader.SetVec3("light.position", lightPos);
+        //objectShader.SetVec3("light.position", lightPos);
         //objectShader.SetVec3("light.direction", -0.2f, -1.0f, -0.3f);
+
+        objectShader.SetUniform1f("light.cutOff", glm::cos(glm::radians(7.0f)));
+
         objectShader.SetUniform1f("light.constant", 1.0f);
         objectShader.SetUniform1f("light.linear_value", 0.09f);
         objectShader.SetUniform1f("light.quadratic", 0.032f);
@@ -196,7 +199,6 @@ int main(void)
         GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0));
         GLCall(glEnableVertexAttribArray(0));
 
-        //Testing code
         glm::vec3 cubePositions[] = {
             glm::vec3(0.0f,  0.0f,  0.0f),
             glm::vec3(2.0f,  5.0f, -15.0f),
@@ -219,8 +221,8 @@ int main(void)
 
             Renderer::Clear();
             Renderer::Draw(objectVertexArray, objectShader);
-            
-            //Testing code
+
+            //Spawning 10 cubes for testing purpose.
             for (unsigned int i = 0; i < 10; i++)
             {
                 glm::mat4 model = glm::mat4(1.0f);
@@ -234,7 +236,9 @@ int main(void)
             }
 
             containerTextureNormal.Bind(0U);
-            containerTextureSpecular.Bind(1U);            
+            containerTextureSpecular.Bind(1U);
+
+            #pragma region TestingCode
 
             /*lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
             lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
@@ -249,6 +253,11 @@ int main(void)
             glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
             objectShader.SetVec3("light.ambient", ambientColor);
             objectShader.SetVec3("light.diffuse", diffuseColor);*/
+
+            #pragma endregion
+
+            objectShader.SetVec3("light.position", camera.transform.position);
+            objectShader.SetVec3("light.direction", camera.cameraConstraints.front);
 
             //Updating projection matrix again because fov is being changed through mouse scroll.
             projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);
