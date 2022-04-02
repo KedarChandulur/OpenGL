@@ -39,7 +39,29 @@ struct Material
 	float shininess;
 };
 
-struct Light
+struct DirectionalLight
+{
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+
+	vec3 direction;
+};
+
+struct PointLight
+{
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+
+	vec3 position;
+
+	float constant;
+	float linear;
+	float quadratic;
+};
+
+struct SpotLight
 {
 	vec3 ambient;
 	vec3 diffuse;
@@ -52,9 +74,11 @@ struct Light
 	float outerCutOff;
 
 	float constant;
-	float linear_value;
+	float linear;
 	float quadratic;
 };
+
+#define NO_O_POINT_LIGHTS 4
 
 in vec3 fragPosition;
 in vec3 fragNormal;
@@ -62,41 +86,102 @@ in vec2 fragTexCoords;
 
 uniform vec3 viewPos;
 uniform Material material;
-uniform Light light;
+uniform DirectionalLight directionalLight;
+uniform PointLight pointLights[NO_O_POINT_LIGHTS];
+uniform SpotLight spotLight;
+
+//Light function declarations
+vec3 CalculateDirectionalLight(DirectionalLight directionalLight, vec3 normal, vec3 viewDirection);
+vec3 CalculatePointLight(PointLight pointLight, vec3 normal, vec3 fragPosition, vec3 viewDirection);
+vec3 CalculateSpotLight(SpotLight spotLight, vec3 normal, vec3 fragPosition, vec3 viewDirection);
 
 void main()
 {
-	//Ambient light calculation.
-	vec3 ambient = light.ambient * texture(material.diffuse, fragTexCoords).rgb;
-
-	//Diffuse light calculation.
+	//Properties
 	vec3 Normal = normalize(fragNormal);
-	vec3 lightDirection = normalize(light.position - fragPosition);
-	//vec3 lightDirection = normalize(-light.direction);
-	float diffuseImpact = max(dot(Normal, lightDirection), 0.0);
-	vec3 diffuse = light.diffuse * diffuseImpact * texture(material.diffuse, fragTexCoords).rgb;
-
-	//Specular light calculation.
 	vec3 viewDirection = normalize(viewPos - fragPosition);
-	vec3 reflectionDirection = reflect(-lightDirection, Normal);
-	float specularComponent = pow(max(dot(viewDirection, reflectionDirection), 0.0), material.shininess);
-	vec3 specular = light.specular * specularComponent * texture(material.specular, fragTexCoords).rgb;
 
-	// spotlight (soft edges)
-	float theta = dot(lightDirection, normalize(-light.direction));
-	float epsilon = (light.cutOff - light.outerCutOff);
-	float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
-	diffuse *= intensity;
-	specular *= intensity;
+	//DirectionalLight
+	vec3 result = CalculateDirectionalLight(directionalLight, Normal, viewDirection);
+	
+	//PointLight
+	for (int i = 0; i < NO_O_POINT_LIGHTS; i++)
+		result += CalculatePointLight(pointLights[i], Normal, fragPosition, viewDirection);
 
-	// attenuation
-	float distance = length(light.position - fragPosition);
-	float attenuation = 1.0 / (light.constant + light.linear_value * distance + light.quadratic * (distance * distance));
+	//SpotLight
+	result += CalculateSpotLight(spotLight, Normal, fragPosition, viewDirection);
+
+	color = vec4(result, 1.0);
+};
+
+vec3 CalculateDirectionalLight(DirectionalLight directionalLight, vec3 normal, vec3 viewDirection)
+{
+	vec3 lightDirection = normalize(-directionalLight.direction);
+
+	//diffuse impact.
+	float diffuseImpact = max(dot(normal, lightDirection), 0.0);
+
+	//Specular impact.
+	vec3 reflectDirection = reflect(-lightDirection, normal);
+	float specularImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), material.shininess);
+
+	vec3 ambient = directionalLight.ambient * vec3(texture(material.diffuse, fragTexCoords));
+	vec3 diffuse = directionalLight.diffuse * diffuseImpact * vec3(texture(material.diffuse, fragTexCoords));
+	vec3 specular = directionalLight.specular * specularImpact * vec3(texture(material.specular, fragTexCoords));
+	return (ambient + diffuse + specular);
+}
+
+vec3 CalculatePointLight(PointLight pointLight, vec3 normal, vec3 fragPosition, vec3 viewDirection)
+{
+	vec3 lightDirection = normalize(pointLight.position - fragPosition);
+
+	//diffuse impact
+	float diffuseImpact = max(dot(normal, lightDirection), 0.0);
+
+	//specular impact
+	vec3 reflectDirection = reflect(-lightDirection, normal);
+	float specularImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), material.shininess);
+
+	//Attenuation
+	float distance = length(pointLight.position - fragPosition);
+	float attenuation = 1.0 / (pointLight.constant + pointLight.linear * distance + pointLight.quadratic * (distance * distance));
+
+	vec3 ambient = pointLight.ambient * vec3(texture(material.diffuse, fragTexCoords));
+	vec3 diffuse = pointLight.diffuse * diffuseImpact * vec3(texture(material.diffuse, fragTexCoords));
+	vec3 specular = pointLight.specular * specularImpact * vec3(texture(material.specular, fragTexCoords));
 
 	ambient *= attenuation;
 	diffuse *= attenuation;
 	specular *= attenuation;
+	return (ambient + diffuse + specular);
+}
 
-	vec3 result = ambient + diffuse + specular;
-	color = vec4(result, 1.0);
-};
+vec3 CalculateSpotLight(SpotLight spotLight, vec3 normal, vec3 fragPosition, vec3 viewDirection)
+{
+	vec3 lightDirection = normalize(spotLight.position - fragPosition);
+
+	//diffuse impact
+	float diffuseImpact = max(dot(normal, lightDirection), 0.0);
+
+	//specular impact
+	vec3 reflectDirection = reflect(-lightDirection, normal);
+	float specularImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), material.shininess);
+
+	//Attenuation
+	float distance = length(spotLight.position - fragPosition);
+	float attenuation = 1.0 / (spotLight.constant + spotLight.linear * distance + spotLight.quadratic * (distance * distance));
+
+	//spotlight intensity
+	float theta = dot(lightDirection, normalize(-spotLight.direction));
+	float epsilon = spotLight.cutOff - spotLight.outerCutOff;
+	float intensity = clamp((theta - spotLight.outerCutOff) / epsilon, 0.0, 1.0);
+
+	vec3 ambient = spotLight.ambient * vec3(texture(material.diffuse, fragTexCoords));
+	vec3 diffuse = spotLight.diffuse * diffuseImpact * vec3(texture(material.diffuse, fragTexCoords));
+	vec3 specular = spotLight.specular * specularImpact * vec3(texture(material.specular, fragTexCoords));
+
+	ambient *= attenuation * intensity;
+	diffuse *= attenuation * intensity;
+	specular *= attenuation * intensity;
+	return (ambient + diffuse + specular);
+}
