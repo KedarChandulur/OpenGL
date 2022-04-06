@@ -1,11 +1,17 @@
 #include <iostream>
-#include "glm/gtc/matrix_transform.hpp"
-#include <glm/gtc/type_ptr.hpp>
+
 #include "VertexBufferLayout.h"
 #include "CallBackBridge.h"
 #include "Time.h"
 #include "Cursor.h"
 #include "Texture.h"
+
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 #pragma region CallBackBridge_Method
 //Reference taken from: https://github.com/glfw/glfw/issues/815#issuecomment-235986227
@@ -61,7 +67,7 @@ int main(void)
     callBackBridge.SetWindowResizeCallback(window);
     callBackBridge.SetMouseCallbacks(window, camera);
 
-    Cursor cursor(window);
+    Cursor cursor(window, true);
 
     //glm::vec3 lightPos(1.25f, 1.5f, 2.0f);
     //glm::vec3 lightPos(0.8f, 0.0f, 0.5f);
@@ -250,6 +256,12 @@ int main(void)
         GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0));
         GLCall(glEnableVertexAttribArray(0));
         
+        ImGui::CreateContext();
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        const char* glsl_version = "#version 330";
+        ImGui_ImplOpenGL3_Init(glsl_version);
+        ImGui::StyleColorsDark();
+
         while (!glfwWindowShouldClose(window))
         {
             Time::Update();
@@ -258,6 +270,11 @@ int main(void)
             camera.ProcessInput(window);
 
             Renderer::Clear();
+
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
             Renderer::Draw(objectVertexArray, objectShader);
 
             //Spawning 10 cubes for testing purpose.
@@ -320,11 +337,24 @@ int main(void)
                 GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
             }
 
+            {
+                ImGui::Begin("New Window");
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                ImGui::End();
+            }
+
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
 
         GLCall(glDeleteVertexArrays(1, &lightCubeVAO));
+
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
     }
 
     glfwTerminate();
