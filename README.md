@@ -11,6 +11,7 @@ The code has multiple dependencies
 - glew - http://glew.sourceforge.net/
 - glm - https://github.com/g-truc/glm/tree/master/glm
 - stb_image.h -> https://github.com/nothings/stb/blob/master/stb_image.h
+- ImGui -> https://github.com/ocornut/imgui
 
-_Current master branch has work till the Camera class,_
-_Currently working on Lighting part._
+_Current master branch has work till the Lighting class,_
+_Currently working on Mesh(assimp)._
