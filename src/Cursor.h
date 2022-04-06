@@ -5,7 +5,7 @@
 struct Cursor : I_InputHelper
 {
 	virtual ~Cursor() = default;
-	Cursor(GLFWwindow* window);
+	Cursor(GLFWwindow* window, bool visible = false);
 
 	void ProcessInput(GLFWwindow* window) override;
 

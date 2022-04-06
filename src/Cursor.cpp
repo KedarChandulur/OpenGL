@@ -1,8 +1,9 @@
 #include "Cursor.h"
 
-Cursor::Cursor(GLFWwindow* window)
+Cursor::Cursor(GLFWwindow* window, bool visible)
 {
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	if(!visible)
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Cursor::ProcessInput(GLFWwindow* window)
