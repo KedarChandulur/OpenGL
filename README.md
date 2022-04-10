@@ -14,4 +14,4 @@ The code has multiple dependencies
 - ImGui -> https://github.com/ocornut/imgui
 
 _Current master branch has work till the Lighting class,_
-_Currently working on Mesh(assimp)._
+_Currently working on Mesh/Asset Import._
