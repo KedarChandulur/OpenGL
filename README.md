@@ -1,7 +1,7 @@
 # OpenGL
 **Researching on OpenGL (Still a W.I.P)**
 - Adding more code and abstracting where possible.
-- Using https://learnopengl.com/ as a part of research or for reference purpose.
+- Using **[LearnOpenGL](https://learnopengl.com/)** as a part of research or for reference purpose.
 
 # After cloning/Before working on the code
 **Dependencies**
@@ -15,3 +15,6 @@ The code has multiple dependencies
 
 _Current master branch has work till the Lighting class,_
 _Currently working on Mesh/Asset Import._
+
+# Mentions
+**[TheCherno](https://github.com/TheCherno)**
