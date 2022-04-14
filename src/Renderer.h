@@ -1,25 +1,12 @@
 #pragma once
 
-#include <GL/glew.h>
-#include "GLFW\glfw3.h"
+#include "OpenGLErrorHandler.h"
 #include "VertexArray.h"
 #include "IndexBuffer.h"
 #include "Shader.h"
 
-#define ASSERT(x) if (!(x)) __debugbreak();
-#define GLCall(x) GLClearError();\
-    x;\
-    ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
-#define GLCallHex(x) GLClearError();\
-    x;\
-    ASSERT(GLLogCallHex())
-
-void GLClearError();
-
-bool GLLogCall(const char* function, const char* file, int line);
-
-bool GLLogCallHex();
+#include <GL/glew.h>
+#include "GLFW/glfw3.h"
 
 class Renderer
 {
