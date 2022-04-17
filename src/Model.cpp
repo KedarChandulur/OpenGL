@@ -14,10 +14,11 @@ void Model::Draw(Shader& shader)
 		meshes[i].Draw(shader);
 }
 
-void Model::LoadModel(std::string path)
+void Model::LoadModel(const std::string& path)
 {
+	//stbi_set_flip_vertically_on_load(true);
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_FlipUVs);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
