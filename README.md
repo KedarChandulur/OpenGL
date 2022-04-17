@@ -13,8 +13,9 @@ The code has multiple dependencies
 - stb_image.h -> https://github.com/nothings/stb/blob/master/stb_image.h
 - ImGui -> https://github.com/ocornut/imgui
 
-_Current master branch has work till the Lighting class,_
-_Currently working on Mesh/Asset Import._
+_Current master branch has work till the Model and Mesh Class(Using Assimp),_
+_Currently working on Advanced OpenGL._
 
 # Mentions
 **[TheCherno](https://github.com/TheCherno)**
+**[LearnOpenGL](https://learnopengl.com/)**
