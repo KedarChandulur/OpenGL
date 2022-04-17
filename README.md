@@ -19,5 +19,5 @@ _Current master branch has work till the Model and Mesh Class(Using Assimp),_
 _Currently working on Advanced OpenGL._
 
 # Mentions
-**[TheCherno](https://github.com/TheCherno)**
+**[TheCherno](https://github.com/TheCherno)**  
 **[LearnOpenGL](https://learnopengl.com/)**
