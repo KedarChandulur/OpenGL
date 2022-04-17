@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-//#define MAX_BONE_INFLUENCE 4
+#define MAX_BONE_INFLUENCE 4
 
 struct Vertex
 {
@@ -17,8 +17,8 @@ struct Vertex
     glm::vec3 tangent;
     glm::vec3 bitangent;
 
-    //int boneIDs[MAX_BONE_INFLUENCE];
-    //float weights[MAX_BONE_INFLUENCE];
+    int boneIDs[MAX_BONE_INFLUENCE];
+    float weights[MAX_BONE_INFLUENCE];
 };
 
 /// <summary>
