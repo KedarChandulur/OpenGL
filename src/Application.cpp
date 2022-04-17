@@ -5,9 +5,7 @@
 #include "Time.h"
 #include "Cursor.h"
 #include "Texture.h"
-
 #include "Model.h"
-//#include "Model_Testing_Class.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
