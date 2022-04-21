@@ -17,6 +17,7 @@ public:
 
 	//Enables blends and applies the sfactor and dfactor to blend function.
 	static void SetBlendFunction(GLenum sfactor, GLenum dfactor);
+	static void SetFlipVerticallyOnLoad(bool value = true);
 private:
 	void SetFormat(const int& channels, GLenum& internalFormat, GLenum& dataFormat);
 

@@ -5,7 +5,7 @@
 //Texture::Texture(const std::string& path)
 //	: m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_Channels(0)
 //{
-//	stbi_set_flip_vertically_on_load(1);
+//	SetFlipVerticallyOnLoad(true);
 //	m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_Channels, 0);
 //
 //	GLCall(glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID));
@@ -39,7 +39,7 @@
 Texture::Texture(const std::string& path)
 	: m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_Channels(0)
 {
-	stbi_set_flip_vertically_on_load(1);
+	SetFlipVerticallyOnLoad(true);
 	m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_Channels, 0);
 
 	GLCall(glGenTextures(1, &m_RendererID));
@@ -109,6 +109,11 @@ void Texture::SetBlendFunction(GLenum sfactor, GLenum dfactor)
 {
 	GLCall(glEnable(GL_BLEND));
 	GLCall(glBlendFunc(sfactor, dfactor));
+}
+
+void Texture::SetFlipVerticallyOnLoad(bool value)
+{
+	stbi_set_flip_vertically_on_load(value);
 }
 
 void Texture::SetFormat(const int& channels, GLenum& internalFormat, GLenum& dataFormat)
