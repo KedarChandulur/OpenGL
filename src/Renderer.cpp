@@ -14,11 +14,17 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
     GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
 }
 
-void Renderer::Draw(const VertexArray& va, const Shader& shader)
+void Renderer::Draw(const VertexArray& va, const Shader& shader, GLsizei count)
 {
     shader.Bind();
     va.Bind();
-    GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
+    GLCall(glDrawArrays(GL_TRIANGLES, 0, count));
+}
+
+void Renderer::Draw(const VertexArray& va, GLsizei count)
+{
+    va.Bind();
+    GLCall(glDrawArrays(GL_TRIANGLES, 0, count));
 }
 
 void Renderer::ProcessInput(GLFWwindow* window)
