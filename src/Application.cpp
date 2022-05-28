@@ -196,12 +196,12 @@ int main(void)
 
             textureMarbel.Bind(0U);
             model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(-1.0f, 1.0f, -1.0f));
+            model = glm::translate(model, glm::vec3(-1.0f, 0.01f, -1.0f));
             objectShader.SetUniformMat4fp("model", glm::value_ptr(model));
             Renderer::Draw(objectVertexArray, 36);
 
             model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(2.0f, 1.0f, 0.0f));
+            model = glm::translate(model, glm::vec3(2.0f, 0.01f, 0.0f));
             objectShader.SetUniformMat4fp("model", glm::value_ptr(model));
             Renderer::Draw(objectVertexArray, 36);
 
