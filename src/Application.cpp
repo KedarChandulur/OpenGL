@@ -74,6 +74,9 @@ int main(void)
         //Texture::SetBlendFunction(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
         VertexBufferLayout vertexBufferLayout;
 
@@ -143,7 +146,7 @@ int main(void)
         planeVertexArray.AddBuffer(planeBuffer, vertexBufferLayout);
 
         Shader objectShader("res/Shaders/Adv-OpenGL.shader");
-
+        Shader borderColorShader("res/Shaders/FragColor.shader");
 
         Texture textureMarbel("res/Textures/marble.jpg");
 
@@ -173,6 +176,8 @@ int main(void)
         ImGui_ImplOpenGL3_Init("#version 330");
         ImGui::StyleColorsDark();
 
+        float borderScale = 1.1f;
+
         while (!glfwWindowShouldClose(window))
         {
             Time::Update();
@@ -186,14 +191,25 @@ int main(void)
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            objectShader.Bind();
-
             //Updating projection matrix again because fov is being changed through mouse scroll.
             projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);
             view = camera.GetViewMatrix();
+
+            borderColorShader.Bind();
+            borderColorShader.SetUniformMat4f("projection", projection);
+            borderColorShader.SetUniformMat4f("view", view);
+
+            objectShader.Bind();
             objectShader.SetUniformMat4f("projection", projection);
             objectShader.SetUniformMat4f("view", view);
 
+            glStencilMask(0x00);
+            textureMetal.Bind(0U);
+            objectShader.SetUniformMat4f("model", glm::mat4(1.0f));
+            Renderer::Draw(planeVertexArray, 6);
+
+            glStencilFunc(GL_ALWAYS, 1, 0xFF);
+            glStencilMask(0xFF);
             textureMarbel.Bind(0U);
             model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(-1.0f, 0.01f, -1.0f));
@@ -205,10 +221,24 @@ int main(void)
             objectShader.SetUniformMat4fp("model", glm::value_ptr(model));
             Renderer::Draw(objectVertexArray, 36);
 
-            textureMetal.Bind(0U);
-            objectShader.SetUniformMat4f("model", glm::mat4(1.0f));
-            Renderer::Draw(planeVertexArray, 6);
+            glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+            glStencilMask(0x00);
+            glDisable(GL_DEPTH_TEST);
+            borderColorShader.Bind();
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(-1.0f, 0.01f, -1.0f));
+            model = glm::scale(model, glm::vec3(borderScale, borderScale, borderScale));
+            borderColorShader.SetUniformMat4fp("model", glm::value_ptr(model));
+            Renderer::Draw(objectVertexArray, 36);
 
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(2.0f, 0.01f, 0.0f));
+            model = glm::scale(model, glm::vec3(borderScale, borderScale, borderScale));
+            borderColorShader.SetUniformMat4fp("model", glm::value_ptr(model));
+            Renderer::Draw(objectVertexArray, 36);
+            glStencilMask(0xFF);
+            glStencilFunc(GL_ALWAYS, 0, 0xFF);
+            glEnable(GL_DEPTH_TEST);
 
             {
                 ImGui::Begin("New Window");
