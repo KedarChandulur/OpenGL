@@ -15,7 +15,6 @@ The code has multiple dependencies
 - Assimp - https://github.com/assimp/assimp/blob/master/Build.md, Assimp Documentation - https://assimp-docs.readthedocs.io/en/v5.1.0/
 - CMake - https://cmake.org/download/, CMake Setup Video Guide (_Specifically for Assimp_) - https://www.youtube.com/watch?v=W_Ey_YPUjMk
 
-_Current master branch has work till the Model and Mesh Class(Using Assimp),_
 _Currently working on Advanced OpenGL._
 
 # Mentions
