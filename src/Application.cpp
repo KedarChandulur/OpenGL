@@ -127,52 +127,75 @@ int main(void)
 
         float planeVerticesArray[] = {
             //Positions           //Texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
-             5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+             5.0f, -0.5f,  5.0f,  1.0f, 0.0f,
             -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
-            -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+            -5.0f, -0.5f, -5.0f,  0.0f, 1.0f,
 
-             5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-            -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-             5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+             5.0f, -0.5f,  5.0f,  1.0f, 0.0f,
+            -5.0f, -0.5f, -5.0f,  0.0f, 1.0f,
+             5.0f, -0.5f, -5.0f,  1.0f, 1.0f
+        };
+
+        float transparentVerticesArray[] = {
+            //Positions          //Texture Coords (swapped y coordinates because texture is flipped upside down)
+            0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+            0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
+            1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+
+            0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+            1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+            1.0f,  0.5f,  0.0f,  1.0f,  0.0f
         };
 
         vertexBufferLayout.Push<float>(3); //Positions.
         vertexBufferLayout.Push<float>(2); //Texture coords.
 
-        VertexBuffer vertexBuffer(vertexBufferArray, sizeof(vertexBufferArray)), planeBuffer(planeVerticesArray, sizeof(planeVerticesArray));
+        VertexBuffer vertexBuffer(vertexBufferArray, sizeof(vertexBufferArray)), planeBuffer(planeVerticesArray, sizeof(planeVerticesArray)), transparentBuffer(transparentVerticesArray, sizeof(transparentVerticesArray));
 
-        VertexArray objectVertexArray, planeVertexArray;
+        VertexArray objectVertexArray, planeVertexArray, transparentVertexArray;
         objectVertexArray.AddBuffer(vertexBuffer, vertexBufferLayout);
         planeVertexArray.AddBuffer(planeBuffer, vertexBufferLayout);
+        transparentVertexArray.AddBuffer(transparentBuffer, vertexBufferLayout);
 
-        Shader objectShader("res/Shaders/Adv-OpenGL.shader");
         Shader borderColorShader("res/Shaders/FragColor.shader");
+        Shader objectShader("res/Shaders/Adv-OpenGL.shader");
 
-        Texture textureMarbel("res/Textures/marble.jpg");
-
+        Texture textureMarbel("res/Textures/marble.jpg", true);
         textureMarbel.Bind(0U);
-        Texture textureMetal("res/Textures/metal.png");
-        textureMetal.Bind(1U);
+        //Texture textureMetal("res/Textures/metal.png", true);
+        //textureMetal.Bind(1U);
+        Texture textureGrass("res/Textures/grass.png", false);
+        textureGrass.Bind(2U);
+
+        std::vector<glm::vec3> grassPositions
+        {
+            glm::vec3(-1.5f, 0.0f, -0.48f),
+            glm::vec3(1.5f, 0.0f, 0.51f),
+            glm::vec3(0.0f, 0.0f, 0.7f),
+            glm::vec3(-0.3f, 0.0f, -2.3f),
+            glm::vec3(0.5f, 0.0f, -0.6f)
+        };
 
         objectShader.Bind();
         objectShader.SetUniform1i("texture1", 0);
 
         objectVertexArray.UnBind();
         planeVertexArray.UnBind();
+        transparentVertexArray.UnBind();
 
         vertexBuffer.UnBind();
         planeBuffer.UnBind();
+        transparentBuffer.UnBind();
 
         objectShader.UnBind();
 
         textureMarbel.UnBind();
-        textureMetal.UnBind();
+        //textureMetal.UnBind();
 
         glm::mat4 model(1.0f), view(model), projection(model);
         
         ImGui::CreateContext();
         ImGui_ImplGlfw_InitForOpenGL(window, true);
-        //const char* glsl_version = "#version 330";
         ImGui_ImplOpenGL3_Init("#version 330");
         ImGui::StyleColorsDark();
 
@@ -204,7 +227,8 @@ int main(void)
             objectShader.SetUniformMat4f("view", view);
 
             glStencilMask(0x00);
-            textureMetal.Bind(0U);
+            //textureMetal.Bind(0U);
+            textureMarbel.Bind(0U);
             objectShader.SetUniformMat4f("model", glm::mat4(1.0f));
             Renderer::Draw(planeVertexArray, 6);
 
@@ -239,6 +263,16 @@ int main(void)
             glStencilMask(0xFF);
             glStencilFunc(GL_ALWAYS, 0, 0xFF);
             glEnable(GL_DEPTH_TEST);
+
+            objectShader.Bind();
+            textureGrass.Bind(0U);
+            for (unsigned int i = 0; i < grassPositions.size(); i++)
+            {
+                model = glm::mat4(1.0f);
+                model = glm::translate(model, grassPositions[i]);
+                objectShader.SetUniformMat4f("model", model);
+                Renderer::Draw(transparentVertexArray, 6);
+            }
 
             {
                 ImGui::Begin("New Window");
