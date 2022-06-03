@@ -162,8 +162,8 @@ int main(void)
 
         Texture textureMarbel("res/Textures/marble.jpg", true);
         textureMarbel.Bind(0U);
-        //Texture textureMetal("res/Textures/metal.png", true);
-        //textureMetal.Bind(1U);
+        Texture textureMetal("res/Textures/metal.png", true);
+        textureMetal.Bind(1U);
         Texture textureGrass("res/Textures/grass.png", false);
         textureGrass.Bind(2U);
 
@@ -190,7 +190,7 @@ int main(void)
         objectShader.UnBind();
 
         textureMarbel.UnBind();
-        //textureMetal.UnBind();
+        textureMetal.UnBind();
 
         glm::mat4 model(1.0f), view(model), projection(model);
         
@@ -227,8 +227,7 @@ int main(void)
             objectShader.SetUniformMat4f("view", view);
 
             glStencilMask(0x00);
-            //textureMetal.Bind(0U);
-            textureMarbel.Bind(0U);
+            textureMetal.Bind(0U);
             objectShader.SetUniformMat4f("model", glm::mat4(1.0f));
             Renderer::Draw(planeVertexArray, 6);
 
