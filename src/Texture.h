@@ -6,7 +6,7 @@
 class Texture
 {
 public:
-	Texture(const std::string& path);
+	Texture(const std::string& path, bool flipVertsOnLoad);
 	~Texture();
 
 	void Bind(unsigned int slot = 0) const;
