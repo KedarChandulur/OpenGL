@@ -6,7 +6,7 @@
 class Texture
 {
 public:
-	Texture(const std::string& path, bool flipVertsOnLoad);
+	Texture(const std::string& path, bool flipVertsOnLoad = true);
 	~Texture();
 
 	void Bind(unsigned int slot = 0) const;
@@ -15,9 +15,7 @@ public:
 	int GetWidth() const { return m_Width; }
 	int GetHeight() const { return m_Height; }
 
-	//Enables blends and applies the sfactor and dfactor to blend function.
-	static void SetBlendFunction(GLenum sfactor, GLenum dfactor);
-	static void SetFlipVerticallyOnLoad(bool value = true);
+	//static void SetFlipVerticallyOnLoad(bool value = true);
 private:
 	void SetFormat(const int& channels, GLenum& internalFormat, GLenum& dataFormat);
 
