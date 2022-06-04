@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 
 #include "VertexBufferLayout.h"
 #include "CallBackBridge.h"
@@ -12,6 +13,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+
 
 #pragma region CallBackBridge_Method
 //Reference taken from: https://github.com/glfw/glfw/issues/815#issuecomment-235986227
@@ -71,12 +73,15 @@ int main(void)
 
     //Adding extra scope for clean up.
     {
-        //Texture::SetBlendFunction(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
-        glEnable(GL_STENCIL_TEST);
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        GLCall(glEnable(GL_DEPTH_TEST));
+        GLCall(glDepthFunc(GL_LESS));
+
+        GLCall(glEnable(GL_STENCIL_TEST));
+        GLCall(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
+        GLCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
+
+        GLCall(glEnable(GL_BLEND));
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
         VertexBufferLayout vertexBufferLayout;
 
@@ -160,14 +165,15 @@ int main(void)
         Shader borderColorShader("res/Shaders/FragColor.shader");
         Shader objectShader("res/Shaders/Adv-OpenGL.shader");
 
-        Texture textureMarbel("res/Textures/marble.jpg", true);
+        Texture textureMarbel("res/Textures/marble.jpg");
         textureMarbel.Bind(0U);
-        Texture textureMetal("res/Textures/metal.png", true);
+        Texture textureMetal("res/Textures/metal.png");
         textureMetal.Bind(1U);
         Texture textureGrass("res/Textures/grass.png", false);
+        //Texture textureGrass("res/Textures/blending_transparent_window.png");
         textureGrass.Bind(2U);
 
-        std::vector<glm::vec3> grassPositions
+        std::vector<glm::vec3> windows
         {
             glm::vec3(-1.5f, 0.0f, -0.48f),
             glm::vec3(1.5f, 0.0f, 0.51f),
@@ -213,6 +219,13 @@ int main(void)
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
+
+            std::map<float, glm::vec3> sorted;
+            for (unsigned int i = 0; i < windows.size(); i++)
+            {
+                float distance = glm::length(camera.transform.position - windows[i]);
+                sorted[distance] = windows[i];
+            }
 
             //Updating projection matrix again because fov is being changed through mouse scroll.
             projection = glm::perspective(glm::radians(camera.settings.fov), camera.settings.aspectRatio, camera.settings.near, camera.settings.far);
@@ -265,10 +278,17 @@ int main(void)
 
             objectShader.Bind();
             textureGrass.Bind(0U);
-            for (unsigned int i = 0; i < grassPositions.size(); i++)
+            /*for (unsigned int i = 0; i < windows.size(); i++)
             {
                 model = glm::mat4(1.0f);
-                model = glm::translate(model, grassPositions[i]);
+                model = glm::translate(model, windows[i]);
+                objectShader.SetUniformMat4f("model", model);
+                Renderer::Draw(transparentVertexArray, 6);
+            }*/
+            for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it)
+            {
+                model = glm::mat4(1.0f);
+                model = glm::translate(model, it->second);
                 objectShader.SetUniformMat4f("model", model);
                 Renderer::Draw(transparentVertexArray, 6);
             }
