@@ -19,6 +19,10 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) #link time optimization
 
 # Ensure OpenGL is built as static libraries
 
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TEST OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build OpenGL as static libraries" FORCE)
 
 if(MSVC)
@@ -28,8 +32,10 @@ endif()
 project(MyOpenGL)
 
 #Add OpenGL and other libraries if needed!
-#add_subdirectory("vendor/glfw")
-#add_subdirectory("vendor/glew")
+add_subdirectory("vendor/glfw")
+add_subdirectory("vendor/glm")
+add_subdirectory("vendor/glew-cmake")
+add_subdirectory("vendor/assimp")
 
 # MY_SOURCES is defined to be a list of all the source files for my pong game
 # DON'T ADD THE SOURCES BY HAND, they are already added with this macro
@@ -39,6 +45,8 @@ file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/
 add_executable("${CMAKE_PROJECT_NAME}")
 
 set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY CXX_STANDARD 17)
+
+target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC GLFW_INCLUDE_NONE=1)
 
 if(PRODUCTION_BUILD)
 	# setup the ASSETS_PATH macro to be in the root folder of your exe
@@ -67,7 +75,7 @@ endif()
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 
 #link OpenGL/other libraries statically
-#target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE sfml-graphics)
+target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glfw glm libglew_static assimp)
 
 # Only copy the Resources folder if we are building for production
 #if(PRODUCTION_BUILD)
