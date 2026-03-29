@@ -1,0 +1,128 @@
+cmake_minimum_required(VERSION "3.20.0")
+
+set(CMAKE_CXX_STANDARD 98)
+
+#! ! ! ! ! ! !
+#set this to true to ship the application!
+#basically this will change the RESOURCES_PATH to be the local path
+#! ! ! ! ! ! !
+#DELETE THE OUT FOLDER AFTER CHANGING THIS BECAUSE VISUAL STUDIO DOESN'T SEEM TO RECOGNIZE THIS CHANGE AND REBUILD!
+
+option(PRODUCTION_BUILD "Make this a production build!" OFF)
+
+#DELETE THE OUT FOLDER AFTER CHANGING THIS BECAUSE VISUAL STUDIO DOESN'T SEEM TO RECOGNIZE THIS CHANGE AND REBUILD!
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) #link time optimization
+
+# Ensure OpenGL is built as static libraries
+
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TEST OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build OpenGL as static libraries" FORCE)
+
+set(glew-cmake_BUILD_STATIC ON CACHE BOOL "" FORCE)
+set(glew-cmake_BUILD_SHARED OFF CACHE BOOL "" FORCE)
+set(ONLY_LIBS ON CACHE BOOL "" FORCE)
+
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+
+if(MSVC)
+	add_compile_options(/arch:AVX2) #make sure SIMD optimizations take place
+endif()
+
+project(MyOpenGL)
+
+#Add OpenGL and other libraries if needed!
+add_subdirectory("vendor/glfw")
+add_subdirectory("vendor/glm")
+add_subdirectory("vendor/assimp")
+add_subdirectory("vendor/cmake-glew")
+
+#add_subdirectory("vendor/imgui")
+#add_subdirectory("vendor/stb")
+
+# MY_SOURCES is defined to be a list of all the source files for my pong game
+# DON'T ADD THE SOURCES BY HAND, they are already added with this macro
+
+file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+
+add_executable("${CMAKE_PROJECT_NAME}")
+
+file(GLOB IMGUI_SOURCES "vendor/imgui/*.cpp")
+
+#add_library(imgui STATIC
+#    ${IMGUI_SOURCES}
+#)
+
+add_library(imgui STATIC
+    ${IMGUI_SOURCES}
+    vendor/imgui/backends/imgui_impl_glfw.cpp
+    vendor/imgui/backends/imgui_impl_opengl3.cpp
+)
+
+target_include_directories(imgui PUBLIC
+    vendor/imgui
+    vendor/imgui/backends
+)
+
+target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC vendor/stb)
+
+set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY CXX_STANDARD 17)
+
+target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC GLEW_STATIC)
+
+target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC GLFW_INCLUDE_NONE=1)
+
+if(PRODUCTION_BUILD)
+	# setup the ASSETS_PATH macro to be in the root folder of your exe
+	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC RESOURCES_PATH="./res/")
+
+	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC PRODUCTION_BUILD=1)
+else()
+	# This is useful to get the ASSETS_PATH in your IDE during development
+    target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/")
+
+    target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC PRODUCTION_BUILD=0)
+endif()
+
+target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${MY_SOURCES})
+
+if(MSVC)
+	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC _CRT_SECURE_NO_WARNINGS)
+
+	#no console
+	if(PRODUCTION_BUILD)
+		set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+	endif()
+
+endif()
+
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
+#target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+#target_include_directories(imgui PUBLIC vendor/imgui)
+
+#link OpenGL/other libraries statically
+#target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glfw glm assimp imgui std glew)
+target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glfw glm assimp libglew_static imgui)
+
+target_link_libraries(imgui PRIVATE glfw)
+
+# Only copy the Resources folder if we are building for production
+if(PRODUCTION_BUILD)
+    add_custom_command(
+        TARGET "${CMAKE_PROJECT_NAME}" POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/res"
+        "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/res"
+        COMMENT "Copying Resources folder to build directory..."
+    )
+endif()

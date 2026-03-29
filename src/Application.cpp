@@ -10,9 +10,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 
 #pragma region CallBackBridge_Method
@@ -174,15 +174,17 @@ int main(void)
         planeVertexArray.AddBuffer(planeBuffer, vertexBufferLayout);
         transparentVertexArray.AddBuffer(transparentBuffer, vertexBufferLayout);
 
-        Shader borderColorShader("res/Shaders/FragColor.shader");
-        Shader objectShader("res/Shaders/Adv-OpenGL.shader");
+        const std::string resourcePath = RESOURCES_PATH;
 
-        Texture textureMarbel("res/Textures/marble.jpg");
+        Shader borderColorShader(resourcePath + "Shaders/FragColor.shader");
+        Shader objectShader(resourcePath + "Shaders/Adv-OpenGL.shader");
+
+        Texture textureMarbel(resourcePath + "Textures/marble.jpg");
         textureMarbel.Bind(0U);
-        Texture textureMetal("res/Textures/metal.png");
+        Texture textureMetal(resourcePath + "Textures/metal.png");
         textureMetal.Bind(1U);
-        Texture textureGrass("res/Textures/grass.png", false);
-        //Texture textureGrass("res/Textures/blending_transparent_window.png");
+        Texture textureGrass(resourcePath + "Textures/grass.png", false);
+        //Texture textureGrass(resourcePath + "Textures/blending_transparent_window.png");
         textureGrass.Bind(2U);
 
         objectShader.Bind();
