@@ -19,7 +19,7 @@
 
 **1. Clone the repository with all submodules:**
 ```bash
-git clone --recurse-submodules <repository-url>
+git clone --recurse -submodules <repository-url>
 ```
 
 If you already cloned without submodules:
